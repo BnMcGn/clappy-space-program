@@ -20,12 +20,18 @@
      :y y
      :u 0.0
      :v 0.0
-     :f 0.0
+     :f 1.0
      :a a
      :tm 0.0
      :prev-x 0.0
      :prev-y y
      :prev-a a)))
+
+(defun fake-bird ()
+    '(:X 201.7880007883659d0 :Y 150.5168245808682d0 :U -51.67668839654161d0 :V
+     195.8815563984243d0 :F 159.67324870775448d0 :A 2.196660293600592d0 :TM
+     17.640213 :PREV-X 202.82153453319546d0 :PREV-Y 146.5991935404656d0 :PREV-A
+     2.181462468385244d0))
 
 (defun interpolate-angle (a1 a2 alpha)
   (let* ((pi2 (* 2 pi))
@@ -38,6 +44,15 @@
 
 (defun distance (x y)
   (sqrt (+ (* x x) (* y y))))
+
+;; unused
+(defun live-angle (x y)
+  (let ((dist (distance x y))
+        (pid (/ pi 2))
+        (aa (atan y x)))
+    (if (< dist 200)
+        (+ aa (* pid (/ (- dist 100) 100)))
+        (+ aa pid))))
 
 (defun grav (delta dead &key x y u v f a tm prev-x prev-y
                           prev-a)
@@ -52,7 +67,7 @@
          (a (if dead
                 (+ a (* 10 delta))
                 (let ((pid (/ pi 2))
-                      (aa (atan x y)))
+                      (aa (atan y x)))
                   (if (< dist 200)
                       (+ aa (* pid (/ (- dist 100) 100)))
                       (+ aa pid)))))
